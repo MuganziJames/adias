@@ -174,14 +174,17 @@ class ADIASPipeline:
     
     def _generate_report(self):
         """Create PDF report"""
-        summary_stats = self.analysis_results.get('summary', {
-            'total_regions': len(self.clean_data)
-        })
+        # Get full summary including all indicator statistics
+        summary_stats = self.analysis_results.get('summary', {})
+        
+        # Ensure we have at least total_regions
+        if 'total_regions' not in summary_stats:
+            summary_stats['total_regions'] = len(self.clean_data)
         
         self.report_generator = ReportGenerator(
             analysis_results=self.analysis_results,
             charts=self.charts,
-            summary_stats=summary_stats
+            summary_stats={'summary': summary_stats}  # Wrap in expected structure
         )
         
         self.report_path = self.report_generator.generate_report()
