@@ -61,19 +61,30 @@ class DigitalInequalityReport(FPDF):
             self.cell(0, 10, title, 0, 1, 'L')
             self.ln(2)
         
-        self.set_font('Arial', 'B', 10)
+        # Check if dataframe is empty
+        if df.empty:
+            self.set_font('Arial', 'I', 10)
+            self.cell(0, 10, 'No data available', 0, 1, 'C')
+            self.ln(5)
+            return
+        
+        self.set_font('Arial', 'B', 9)
         self.set_fill_color(200, 220, 255)
         
-        # Column widths (adjust based on number of columns)
-        col_width = 180 / len(df.columns)
+        # Calculate column widths based on content
+        # Use fixed widths that fit on page
+        num_cols = len(df.columns)
+        available_width = 180  # Page width minus margins
+        col_width = available_width / num_cols
         
         # Header
         for col in df.columns:
-            self.cell(col_width, 7, str(col)[:20], 1, 0, 'C', True)
+            col_text = str(col)[:25]  # Truncate long headers
+            self.cell(col_width, 7, col_text, 1, 0, 'C', True)
         self.ln()
         
         # Data rows
-        self.set_font('Arial', '', 9)
+        self.set_font('Arial', '', 8)
         for i, row in df.iterrows():
             for col in df.columns:
                 value = row[col]
@@ -82,7 +93,7 @@ class DigitalInequalityReport(FPDF):
                 elif isinstance(value, float):
                     text = f'{value:.2f}'
                 else:
-                    text = str(value)[:20]
+                    text = str(value)[:25]  # Truncate long values
                 self.cell(col_width, 6, text, 1, 0, 'C')
             self.ln()
         
@@ -145,6 +156,15 @@ class ReportGenerator:
         # Save
         pdf.output(str(output_path))
         logger.info(f"Report saved: {output_path}")
+        
+        # Save a copy to root folder for easy testing (if enabled)
+        if config.SAVE_LATEST_TO_ROOT:
+            try:
+                root_copy_path = config.BASE_DIR / 'latest_report.pdf'
+                pdf.output(str(root_copy_path))
+                logger.info(f"Copy saved to root: {root_copy_path}")
+            except Exception as e:
+                logger.warning(f"Could not save copy to root: {str(e)}")
         
         return str(output_path)
     

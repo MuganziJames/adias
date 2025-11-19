@@ -21,6 +21,7 @@ ITU_GENDER_FILE = DATA_DIR / 'IndividualsUsingInternetByGender_Jan2025.xlsx'
 # Report settings
 REPORT_TITLE = "Digital Inequality Assessment Report"
 REPORT_AUTHOR = "ADIAS - Automated Digital Inequality Assessment System"
+SAVE_LATEST_TO_ROOT = True  # Save a copy as 'latest_report.pdf' in root folder for easy testing
 
 # Analysis thresholds
 LOW_ACCESS_THRESHOLD = 40  # % - regions below this are flagged as underserved
@@ -32,5 +33,5 @@ LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_LEVEL = 'INFO'
 
 # Schedule settings (cron format)
-SCHEDULE_TIME = "09:00"  # Daily at 9 AM
+SCHEDULE_TIME = "17:00"  # Daily at 9 AM
 SCHEDULE_FREQUENCY = "daily"  # Options: daily, weekly, monthly
